@@ -30,8 +30,8 @@ public class SplashActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         trianglifyView.setDrawingCacheEnabled(false);
-        trianglifyView.getDrawable().setCellSize(105);
-        trianglifyView.getDrawable().setVariance(100);
+        trianglifyView.getDrawable().setCellSize(200);
+        trianglifyView.getDrawable().setVariance(50);
         trianglifyView.getDrawable().setColorGenerator(new BrewColorGenerator(ColorBrewer.YlOrRd));
         trianglifyView.getDrawable().setPointGenerator(new RegularPointGenerator());
         trianglifyView.setDrawingCacheEnabled(true);

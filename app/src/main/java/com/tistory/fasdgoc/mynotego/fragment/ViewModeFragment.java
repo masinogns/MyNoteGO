@@ -11,6 +11,9 @@ import android.widget.ImageButton;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.tistory.fasdgoc.mynotego.R;
 
 import butterknife.BindView;
@@ -25,7 +28,10 @@ public class ViewModeFragment extends Fragment {
     private static enum VIEW_MODE {
         CAMERA, MAP
     }
+
     private VIEW_MODE current_mode;
+
+    private GoogleMap mGoogleMap;
 
     @BindView(R.id.mode_button)
     ImageButton mModeButton;
@@ -39,7 +45,7 @@ public class ViewModeFragment extends Fragment {
                 .duration(500)
                 .playOn(mModeButton);
 
-        if(current_mode == VIEW_MODE.CAMERA) {
+        if (current_mode == VIEW_MODE.CAMERA) {
 
             mModeButton.setImageResource(R.drawable.map);
             current_mode = VIEW_MODE.MAP;
@@ -64,8 +70,25 @@ public class ViewModeFragment extends Fragment {
         View root = inflater.inflate(R.layout.viewmodefragment, container, false);
         ButterKnife.bind(this, root);
 
-        mModeButton.setImageResource(R.drawable.camera);
-
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        MapFragment mapFragment = new MapFragment();
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mGoogleMap = googleMap;
+            }
+        });
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.mode, mapFragment, "map")
+                .commit();
+
+        mModeButton.setImageResource(R.drawable.camera);
     }
 }
