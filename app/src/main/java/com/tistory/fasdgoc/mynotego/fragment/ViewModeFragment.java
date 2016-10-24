@@ -1,7 +1,6 @@
 package com.tistory.fasdgoc.mynotego.fragment;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,8 +11,6 @@ import android.widget.ImageButton;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.tistory.fasdgoc.mynotego.R;
 
 import butterknife.BindView;
@@ -39,7 +36,7 @@ public class ViewModeFragment extends Fragment {
     @OnClick(R.id.mode_button)
     public void changeMode() {
 
-        FragmentManager fragmentManager = getFragmentManager();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
 
         YoYo.with(Techniques.RubberBand)
                 .duration(500)
@@ -77,14 +74,8 @@ public class ViewModeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        MapFragment mapFragment = new MapFragment();
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                mGoogleMap = googleMap;
-            }
-        });
-        FragmentManager fragmentManager = getFragmentManager();
+        MyMapFragment mapFragment = new MyMapFragment();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
                 .add(R.id.mode, mapFragment, "map")
                 .commit();
