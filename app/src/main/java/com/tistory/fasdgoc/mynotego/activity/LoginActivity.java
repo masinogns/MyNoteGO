@@ -26,11 +26,15 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.tistory.fasdgoc.mynotego.MainActivity;
 import com.tistory.fasdgoc.mynotego.R;
 import com.tistory.fasdgoc.mynotego.adapter.IntroPagerAdapter;
+import com.tistory.fasdgoc.mynotego.event.SignDialogClose;
 import com.tistory.fasdgoc.mynotego.fragment.LoginFragment;
 import com.tistory.fasdgoc.mynotego.util.ParallelxPageTransformer;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import me.relex.circleindicator.CircleIndicator;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, LoginFragment.OnSignInTryListener {
@@ -51,17 +55,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    @OnClick(R.id.skip)
+    public void onSkipClick() {
+        mViewPager.setCurrentItem(mPagerAdapter.getCount() - 1);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         ButterKnife.bind(this);
-
-        mPagerAdapter = new IntroPagerAdapter(getSupportFragmentManager());
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setPageTransformer(true, new ParallelxPageTransformer());
-        mIndicator.setViewPager(mViewPager);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -74,6 +78,18 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .build();
 
         mAuth = FirebaseAuth.getInstance();
+
+        mPagerAdapter = new IntroPagerAdapter(getSupportFragmentManager());
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setPageTransformer(true, new ParallelxPageTransformer());
+        mIndicator.setViewPager(mViewPager);
+
+        // Already Signed in...
+        if(mAuth.getCurrentUser() != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override
@@ -108,21 +124,30 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
 
                 if (result.isSuccess()) {
-                    GoogleSignInAccount account = result.getSignInAccount();
+                    final GoogleSignInAccount account = result.getSignInAccount();
                     AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
                     mAuth.signInWithCredential(credential)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                    EventBus.getDefault().post(new SignDialogClose(false));
+
                                     if (!task.isSuccessful()) {
                                         Log.w(TAG, "signInWithCredential", task.getException());
                                         Toast.makeText(LoginActivity.this, "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
-                                    }
+                                    } else {
+                                        String userName = account.getDisplayName();
 
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                        Toast.makeText(LoginActivity.this,
+                                                String.format("%s님, 안녕하세요", userName),
+                                                Toast.LENGTH_SHORT).show();
+
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
                                 }
                             });
                 } else {

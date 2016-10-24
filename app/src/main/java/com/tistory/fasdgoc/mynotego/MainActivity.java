@@ -1,5 +1,7 @@
 package com.tistory.fasdgoc.mynotego;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.tistory.fasdgoc.mynotego.activity.LoginActivity;
 import com.tistory.fasdgoc.mynotego.adapter.DrawerListAdapter;
 
 import java.util.ArrayList;
@@ -38,7 +42,33 @@ public class MainActivity extends AppCompatActivity {
 
     @OnItemClick(R.id.left_drawer)
     public void onItemClick(AdapterView<?> parent, int position) {
-        Toast.makeText(this, "Clicked" + position, Toast.LENGTH_SHORT).show();
+        switch (position) {
+            case 0: // Sign Out
+                new AlertDialog.Builder(this)
+                        .setTitle("로그아웃")
+                        .setMessage("로그아웃을 하면\n앱을 이용할 수 없습니다.")
+                        .setIcon(R.drawable.exit)
+                        .setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                FirebaseAuth.getInstance().signOut();
+
+                                Toast.makeText(MainActivity.this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("취소", null)
+                        .show();
+                break;
+
+            default:
+                Toast.makeText(this, "Clicked" + position, Toast.LENGTH_SHORT).show();
+                break;
+        }
+
     }
 
     @Override
@@ -53,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         ArrayList<DrawerListAdapter.DrawerItem> array = new ArrayList<>();
-        array.add(new DrawerListAdapter.DrawerItem(R.drawable.locked, "로그인"));
+        array.add(new DrawerListAdapter.DrawerItem(R.drawable.unlocked, "로그아웃"));
         array.add(new DrawerListAdapter.DrawerItem(R.drawable.like, "오늘의 핫한 장소"));
         array.add(new DrawerListAdapter.DrawerItem(R.drawable.megaphone, "공지사항"));
         array.add(new DrawerListAdapter.DrawerItem(R.drawable.settings, "환경설정"));
