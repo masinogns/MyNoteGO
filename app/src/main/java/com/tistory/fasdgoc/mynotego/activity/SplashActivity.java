@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.manolovn.colorbrewer.ColorBrewer;
 import com.manolovn.trianglify.TrianglifyView;
 import com.manolovn.trianglify.generator.point.RegularPointGenerator;
-import com.tistory.fasdgoc.mynotego.MainActivity;
 import com.tistory.fasdgoc.mynotego.R;
 import com.tistory.fasdgoc.mynotego.util.BrewColorGenerator;
 
@@ -40,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
             }

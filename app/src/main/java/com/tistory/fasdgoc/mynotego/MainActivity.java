@@ -2,6 +2,7 @@ package com.tistory.fasdgoc.mynotego;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.tistory.fasdgoc.mynotego.adapter.DrawerListAdapter;
 
 import java.util.ArrayList;
@@ -24,7 +26,8 @@ import butterknife.OnItemClick;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
-
+    private boolean exitActivity = false;
+    private String title;
     @BindView(R.id.activity_main)
     DrawerLayout mDrawerLayout;
     ActionBarDrawerToggle mDrawerToggle;
@@ -63,12 +66,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                title = getTitle().toString();
+                String user = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                setTitle(user);
                 invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
+                setTitle(title);
                 invalidateOptionsMenu();
             }
         };
@@ -97,7 +104,18 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        super.onBackPressed();
+        if(exitActivity) {
+            super.onBackPressed();
+            return;
+        }
+        exitActivity = true;
+        Toast.makeText(this, "종료하려면 한번 더 누르세요.", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                exitActivity = false;
+            }
+        }, 2000);
     }
 
     @Override

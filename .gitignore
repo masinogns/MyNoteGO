@@ -9,3 +9,4 @@
 .externalNativeBuild
 
 google_maps.api.xml
+google-services.json

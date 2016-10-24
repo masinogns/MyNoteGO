@@ -43,5 +43,11 @@ dependencies {
 
     compile 'com.google.android:flexbox:0.2.3'
 
+    compile 'me.relex:circleindicator:1.2.2@aar'
+
     compile 'com.google.android.gms:play-services:9.8.00'
+    compile 'com.google.firebase:firebase-auth:9.6.1'
+    compile 'com.google.android.gms:play-services-auth:9.8.00'
 }
+
+apply plugin: 'com.google.gms.google-services'
