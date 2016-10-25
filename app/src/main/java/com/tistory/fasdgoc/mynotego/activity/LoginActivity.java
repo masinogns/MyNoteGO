@@ -1,8 +1,6 @@
 package com.tistory.fasdgoc.mynotego.activity;
 
-import android.animation.ArgbEvaluator;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;

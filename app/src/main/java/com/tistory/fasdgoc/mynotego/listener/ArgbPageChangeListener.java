@@ -24,6 +24,8 @@ public class ArgbPageChangeListener implements ViewPager.OnPageChangeListener {
         colors.add(resource.getColor(R.color.color1));
         colors.add(resource.getColor(R.color.color2));
         colors.add(resource.getColor(R.color.color3));
+        colors.add(resource.getColor(R.color.color4));
+        colors.add(resource.getColor(R.color.color5));
         mArgbEvaluator = new ArgbEvaluator();
         mPagerAdapter = pagerAdapter;
         mViewPager = viewPager;

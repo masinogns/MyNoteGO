@@ -26,9 +26,9 @@ public class IntroPagerAdapter extends FragmentStatePagerAdapter {
         IntroFragmentFactory introFactory = IntroFragmentFactory.getInstance();
 
         array.add(introFactory.generateFragment(R.layout.intro_page1));
-        array.add(introFactory.generateFragment(R.layout.intro_page1));
-        array.add(introFactory.generateFragment(R.layout.intro_page1));
-        array.add(introFactory.generateFragment(R.layout.intro_page1));
+        array.add(introFactory.generateFragment(R.layout.intro_page2));
+        array.add(introFactory.generateFragment(R.layout.intro_page3));
+        array.add(introFactory.generateFragment(R.layout.intro_page4));
         array.add(new LoginFragment());
     }
 

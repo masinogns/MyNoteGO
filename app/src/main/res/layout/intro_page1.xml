@@ -32,6 +32,13 @@
                 android:layout_marginRight="50dp"
                 android:layout_width="100dp"
                 android:layout_height="100dp" />
+            <ImageView
+                android:id="@+id/contract"
+                android:src="@drawable/contract"
+                android:layout_alignBottom="@id/message"
+                android:layout_marginBottom="-100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
         <!-- Text -->
         <LinearLayout
@@ -43,18 +50,17 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:textAppearanceLargeInverse"
+                android:textSize="40dp"
+                android:textColor="#FFFFFF"
                 android:textStyle="italic|bold"
-                android:text="Write Message" />
+                android:text="Write" />
             <TextView
                 android:id="@+id/description"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textAppearance="?android:textAppearanceMediumInverse"
+                android:textAppearance="?android:textAppearanceLargeInverse"
                 android:textStyle="bold"
-                android:text="description\ndescriptionasdfasdfasdfasdfasdf
-                asdfsfsdfasdf asdf asdf asd
-                a sdfasdfasdfasdf"/>
+                android:text="Your Message"/>
         </LinearLayout>
 
     </LinearLayout>

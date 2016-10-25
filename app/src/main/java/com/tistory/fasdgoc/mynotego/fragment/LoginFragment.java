@@ -44,8 +44,11 @@ public class LoginFragment extends Fragment {
     public void onSigned(SignDialogClose e) {
         if(e.showing) {
             signingDialog = new SpotsDialog(getActivity());
+            signingDialog.setCancelable(false);
             signingDialog.show();
         } else {
+            if(signingDialog == null)
+                return;
             signingDialog.dismiss();
             signingDialog = null;
         }
