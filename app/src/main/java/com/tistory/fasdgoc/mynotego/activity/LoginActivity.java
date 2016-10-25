@@ -1,6 +1,8 @@
 package com.tistory.fasdgoc.mynotego.activity;
 
+import android.animation.ArgbEvaluator;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -28,6 +30,7 @@ import com.tistory.fasdgoc.mynotego.R;
 import com.tistory.fasdgoc.mynotego.adapter.IntroPagerAdapter;
 import com.tistory.fasdgoc.mynotego.event.SignDialogClose;
 import com.tistory.fasdgoc.mynotego.fragment.LoginFragment;
+import com.tistory.fasdgoc.mynotego.listener.ArgbPageChangeListener;
 import com.tistory.fasdgoc.mynotego.util.ParallelxPageTransformer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -51,6 +54,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     CircleIndicator mIndicator;
 
     private PagerAdapter mPagerAdapter;
+    private ArgbPageChangeListener mPageChangeListener;
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -81,6 +85,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
         mPagerAdapter = new IntroPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
+
+        mPageChangeListener = new ArgbPageChangeListener(getResources(), mPagerAdapter, mViewPager);
+        mViewPager.addOnPageChangeListener(mPageChangeListener);
         mViewPager.setPageTransformer(true, new ParallelxPageTransformer());
         mIndicator.setViewPager(mViewPager);
 
@@ -163,6 +170,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mViewPager.removeOnPageChangeListener(mPageChangeListener);
     }
 
     @Override

@@ -1,49 +1,50 @@
 package com.tistory.fasdgoc.mynotego.util;
 
+import android.graphics.PorterDuff;
+import android.media.Image;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.common.SignInButton;
 import com.tistory.fasdgoc.mynotego.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
 
 /**
  * Created by fasdg on 2016-10-24.
  */
 
 public class ParallelxPageTransformer implements ViewPager.PageTransformer {
-    private boolean toggle = false;
+
     @Override
     public void transformPage(View page, float position) {
-
         int pageWidth = page.getWidth();
-        TextView textView = (TextView) page.findViewById(R.id.textView);
-        TextView textView2 = (TextView) page.findViewById(R.id.textView2);
 
-        // page.getId
-        SignInButton button = (SignInButton) page.findViewById(R.id.google_sign_in);
-        if (position < -1) { // [-Infinity,-1)
-            // This page is way off-screen to the left.
-            page.setAlpha(1);
+        switch (page.getId()) {
+            case R.id.intro1:
+                TextView title = (TextView) page.findViewById(R.id.title);
+                title.setTranslationX((float) ((position) * (pageWidth / 0.8)));
 
-        } else if (position <= 1) { // [-1,1]
-            if(textView != null)
-                textView.setTranslationX((float) (-(1 - position) * 0.5 * pageWidth));
-            if(textView2 != null)
-                textView.setTranslationX((position) * (pageWidth / 4));
+                TextView description = (TextView)page.findViewById(R.id.description);
+                description.setTranslationX((float) ((position) * (pageWidth / 4)));
 
-            if(button != null)
-                button.setTranslationX((float) (-position * (pageWidth) *0.5)); //Half the normal speed
+                ImageView bottle = (ImageView)page.findViewById(R.id.bottle);
+                bottle.setTranslationX((float) ((position) * (pageWidth / 0.1)));
 
-        } else { // (1,+Infinity]
-            // This page is way off-screen to the right.
-            page.setAlpha(1);
+                ImageView message = (ImageView)page.findViewById(R.id.message);
+                message.setTranslationX((float) ((position) * (pageWidth / 0.9)));
+                break;
         }
 
 
-    }
-
-    private void initialize() {
 
     }
 }
