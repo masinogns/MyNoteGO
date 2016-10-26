@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
 import com.tistory.fasdgoc.mynotego.R;
-import com.tistory.fasdgoc.mynotego.fragment.IntroFragmentFactory;
+import com.tistory.fasdgoc.mynotego.fragment.IntroFragment;
 import com.tistory.fasdgoc.mynotego.fragment.LoginFragment;
 
 import java.util.ArrayList;
@@ -23,12 +23,24 @@ public class IntroPagerAdapter extends FragmentStatePagerAdapter {
 
         array = new ArrayList<>();
 
-        IntroFragmentFactory introFactory = IntroFragmentFactory.getInstance();
+        IntroFragment introFragment = null;
 
-        array.add(introFactory.generateFragment(R.layout.intro_page1));
-        array.add(introFactory.generateFragment(R.layout.intro_page2));
-        array.add(introFactory.generateFragment(R.layout.intro_page3));
-        array.add(introFactory.generateFragment(R.layout.intro_page4));
+        introFragment = new IntroFragment();
+        introFragment.setResId(R.layout.intro_page1);
+        array.add(introFragment);
+
+        introFragment = new IntroFragment();
+        introFragment.setResId(R.layout.intro_page2);
+        array.add(introFragment);
+
+        introFragment = new IntroFragment();
+        introFragment.setResId(R.layout.intro_page3);
+        array.add(introFragment);
+
+        introFragment = new IntroFragment();
+        introFragment.setResId(R.layout.intro_page4);
+        array.add(introFragment);
+
         array.add(new LoginFragment());
     }
 

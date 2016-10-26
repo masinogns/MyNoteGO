@@ -3,6 +3,7 @@ package com.tistory.fasdgoc.mynotego.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,21 +13,11 @@ import android.view.ViewGroup;
  */
 
 public class IntroFragment extends Fragment {
-    public static boolean _throughFactory = false;
+    private final static String TAG = "IntroFragment";
+
     private Integer resId;
     public void setResId(Integer resId) {
         this.resId = resId;
-    }
-
-    public IntroFragment() throws Exception {
-        super();
-
-        // Force to use the factory
-        if(IntroFragment._throughFactory == false) {
-            throw new Exception("You have to use the IntroFragmentFactory");
-        } else {
-            IntroFragment._throughFactory = false;
-        }
     }
 
     @Nullable
@@ -34,6 +25,7 @@ public class IntroFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         if(resId == null) {
+            Log.d(TAG, "###You have to set Resource id using setter###");
             return null;
         }
 
