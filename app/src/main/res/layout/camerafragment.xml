@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <com.tistory.fasdgoc.mynotego.view.CameraSurfaceView
+        android:id="@+id/camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Here 3D Object -->
+
+    <ImageButton
+        android:id="@+id/focus"
+        android:src="@drawable/search"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:scaleType="fitXY"
+        android:background="#00FFFFFF"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:text="Button"
+        android:layout_gravity="end"/>
+
+</FrameLayout>

@@ -26,6 +26,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.tistory.fasdgoc.mynotego.MainActivity;
 import com.tistory.fasdgoc.mynotego.R;
 import com.tistory.fasdgoc.mynotego.adapter.IntroPagerAdapter;
+import com.tistory.fasdgoc.mynotego.event.SignInJoin;
 import com.tistory.fasdgoc.mynotego.event.SignDialogClose;
 import com.tistory.fasdgoc.mynotego.fragment.LoginFragment;
 import com.tistory.fasdgoc.mynotego.listener.ArgbPageChangeListener;
@@ -156,6 +157,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                                 }
                             });
                 } else {
+                    EventBus.getDefault().post(new SignInJoin(false));
                     Log.w(TAG, "getSignInResultFromIntent");
                 }
                 break;
@@ -180,6 +182,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     public void onSignInTry(View v) {
         switch (v.getId()) {
             case R.id.google_sign_in:
+                EventBus.getDefault().post(new SignInJoin(true));
                 Intent intent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
                 startActivityForResult(intent, RC_GOOGLE_SIGN_IN);
                 break;

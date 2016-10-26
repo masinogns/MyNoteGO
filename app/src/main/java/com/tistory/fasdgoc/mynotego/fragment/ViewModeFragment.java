@@ -1,6 +1,7 @@
 package com.tistory.fasdgoc.mynotego.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -10,8 +11,13 @@ import android.widget.ImageButton;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-import com.google.android.gms.maps.GoogleMap;
 import com.tistory.fasdgoc.mynotego.R;
+import com.tistory.fasdgoc.mynotego.event.CameraPermissionGranted;
+import com.tistory.fasdgoc.mynotego.helper.ViewModeHelper;
+import com.tistory.fasdgoc.mynotego.util.ModeFragmentProvider;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,13 +28,12 @@ import butterknife.OnClick;
  */
 
 public class ViewModeFragment extends Fragment {
-    private static enum VIEW_MODE {
-        CAMERA, MAP
-    }
+    private ModeFragmentProvider mProvider;
 
-    private VIEW_MODE current_mode;
+    private FragmentManager fragmentManager;
+    private Fragment fragment;
 
-    private GoogleMap mGoogleMap;
+    private int current_mode;
 
     @BindView(R.id.mode_button)
     ImageButton mModeButton;
@@ -36,29 +41,40 @@ public class ViewModeFragment extends Fragment {
     @OnClick(R.id.mode_button)
     public void changeMode() {
 
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        if (current_mode == ViewModeHelper.CAMERA) {
+
+            current_mode = ViewModeHelper.MAP;
+            fragment = mProvider.provideFragment(ViewModeHelper.MAP);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.mode, fragment)
+                    .commit();
+            mModeButton.setImageResource(R.drawable.camera);
+        } else {
+
+            current_mode = ViewModeHelper.CAMERA;
+            fragment = mProvider.provideFragment(ViewModeHelper.CAMERA);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.mode, fragment)
+                    .commit();
+
+            mModeButton.setImageResource(R.drawable.map);
+        }
 
         YoYo.with(Techniques.RubberBand)
                 .duration(500)
                 .playOn(mModeButton);
-
-        if (current_mode == VIEW_MODE.CAMERA) {
-
-            mModeButton.setImageResource(R.drawable.map);
-            current_mode = VIEW_MODE.MAP;
-
-        } else {
-
-            mModeButton.setImageResource(R.drawable.camera);
-            current_mode = VIEW_MODE.CAMERA;
-
-        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        current_mode = VIEW_MODE.CAMERA;
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Nullable
@@ -74,12 +90,26 @@ public class ViewModeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        MyMapFragment mapFragment = new MyMapFragment();
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        initialize();
+
+        current_mode = ViewModeHelper.MAP;
+        fragment = mProvider.provideFragment(ViewModeHelper.MAP);
         fragmentManager.beginTransaction()
-                .add(R.id.mode, mapFragment, "map")
+                .add(R.id.mode, fragment)
                 .commit();
 
         mModeButton.setImageResource(R.drawable.camera);
+    }
+
+    private void initialize() {
+        this.fragmentManager = getFragmentManager();
+
+        mProvider = new ModeFragmentProvider(getActivity());
+    }
+
+    @Subscribe
+    public void OnCameraPermissionGranted(CameraPermissionGranted permissionGranted) {
+        current_mode = ViewModeHelper.MAP;
+        changeMode();
     }
 }
