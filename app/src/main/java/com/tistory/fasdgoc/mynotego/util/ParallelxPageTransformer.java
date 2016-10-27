@@ -36,13 +36,13 @@ public class ParallelxPageTransformer implements ViewPager.PageTransformer {
                 TextView title = (TextView) page.findViewById(R.id.title);
                 title.setTranslationX((float) ((position) * (pageWidth / 0.2)));
 
-                ImageView envelope = (ImageView)page.findViewById(R.id.envelope);
+                ImageView envelope = (ImageView) page.findViewById(R.id.envelope);
                 envelope.setTranslationX((float) ((position) * (pageWidth / 0.8)));
 
-                ImageView plus = (ImageView)page.findViewById(R.id.plus);
+                ImageView plus = (ImageView) page.findViewById(R.id.plus);
                 plus.setTranslationX((float) ((-position) * (pageWidth / 0.5)));
 
-                ImageView smartphone = (ImageView)page.findViewById(R.id.smartphone);
+                ImageView smartphone = (ImageView) page.findViewById(R.id.smartphone);
                 smartphone.setTranslationX((float) ((position) * (pageWidth / 2)));
                 break;
             }
@@ -53,13 +53,13 @@ public class ParallelxPageTransformer implements ViewPager.PageTransformer {
                 TextView description = (TextView) page.findViewById(R.id.description);
                 description.setTranslationX((float) ((position) * (pageWidth / 2)));
 
-                ImageView envelope = (ImageView)page.findViewById(R.id.envelope);
+                ImageView envelope = (ImageView) page.findViewById(R.id.envelope);
                 envelope.setTranslationX((float) ((position) * (pageWidth / 0.1)));
 
-                ImageView arrowright = (ImageView)page.findViewById(R.id.arrowright);
+                ImageView arrowright = (ImageView) page.findViewById(R.id.arrowright);
                 arrowright.setTranslationX((float) ((position) * (pageWidth / 0.9)));
 
-                ImageView arrowleft = (ImageView)page.findViewById(R.id.arrowleft);
+                ImageView arrowleft = (ImageView) page.findViewById(R.id.arrowleft);
                 arrowleft.setTranslationX((float) ((position) * (pageWidth / 0.8)));
                 break;
             }
@@ -68,7 +68,7 @@ public class ParallelxPageTransformer implements ViewPager.PageTransformer {
                 description.setTranslationX((float) ((position) * (pageWidth / 0.6)));
 
                 int pageHeight = page.getHeight();
-                ImageView phonemap = (ImageView)page.findViewById(R.id.phonemap);
+                ImageView phonemap = (ImageView) page.findViewById(R.id.phonemap);
                 phonemap.setTranslationY((float) ((-position) * (pageHeight / 0.2)));
                 break;
             }

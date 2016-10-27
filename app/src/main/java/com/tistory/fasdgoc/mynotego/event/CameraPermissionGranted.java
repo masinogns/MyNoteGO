@@ -5,5 +5,7 @@ package com.tistory.fasdgoc.mynotego.event;
  */
 
 public class CameraPermissionGranted {
+    public CameraPermissionGranted() {
 
+    }
 }

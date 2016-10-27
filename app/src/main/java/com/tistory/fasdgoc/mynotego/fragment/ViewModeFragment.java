@@ -97,7 +97,6 @@ public class ViewModeFragment extends Fragment {
         fragmentManager.beginTransaction()
                 .add(R.id.mode, fragment)
                 .commit();
-
         mModeButton.setImageResource(R.drawable.camera);
     }
 
