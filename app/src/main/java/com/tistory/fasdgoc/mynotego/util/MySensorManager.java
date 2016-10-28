@@ -28,7 +28,7 @@ public class MySensorManager implements SensorEventListener {
 
     @SuppressWarnings("deprecation")
     public void register() {
-        Sensor sensor;
+        Sensor sensor = null;
 
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);

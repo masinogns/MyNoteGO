@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tistory.fasdgoc.mynotego.MainActivity;
 import com.tistory.fasdgoc.mynotego.R;
+import com.tistory.fasdgoc.mynotego.event.MoveMap;
 import com.tistory.fasdgoc.mynotego.event.MoveMarker;
 import com.tistory.fasdgoc.mynotego.util.MyLocationManager;
 
@@ -62,8 +63,8 @@ public class MyMapFragment extends Fragment {
             return;
         }
 
-        boolean immediateRet = locMan.checkService();
-        if (immediateRet) {
+        boolean enabled = locMan.checkService();
+        if (!enabled) {
             return;
         }
 
@@ -77,7 +78,7 @@ public class MyMapFragment extends Fragment {
 
             Location currentLocation = locMan.getCurrentLocation();
             LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            moveMapCamera(latLng);
+            moveMapCamera(new MoveMap(latLng));
         }
     }
 
@@ -99,14 +100,13 @@ public class MyMapFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onStart() {
+        super.onStart();
         EventBus.getDefault().register(this);
     }
 
     @Override
     public void onStop() {
-        Log.d(TAG, "onStop");
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
@@ -115,7 +115,8 @@ public class MyMapFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        locMan = ((MainActivity) getActivity()).getmMyLocationManager();
+
+        locMan = ((MainActivity)getActivity()).getmMyLocationManager();
 
         mMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
@@ -128,27 +129,32 @@ public class MyMapFragment extends Fragment {
                     latLng = new LatLng(33.4549053, 126.5600566); // Cheju University
                 } else {
                     latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    mMyMarker = mGoogleMap.addMarker(
-                            new MarkerOptions()
-                                    .position(latLng));
+                    moveMarker(new MoveMarker());
                 }
 
-                moveMapCamera(latLng);
+                moveMapCamera(new MoveMap(latLng));
             }
         });
     }
 
-    private void moveMapCamera(LatLng latLng) {
+    @Subscribe
+    public void moveMapCamera(MoveMap moveMap) {
+        LatLng latLng = moveMap.latLng;
         CameraPosition cameraPosition = CameraPosition.builder().target(latLng).zoom(15).build();
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     @Subscribe
     public void moveMarker(MoveMarker moveMarker) {
-        mMyMarker.remove();
+        if(mMyMarker != null) {
+            mMyMarker.remove();
+        }
 
-        LatLng latLng = new LatLng(locMan.getCurrentLocation().getLatitude(),
-                locMan.getCurrentLocation().getLongitude());
+        LatLng latLng = new LatLng(
+                locMan.getCurrentLocation().getLatitude(),
+                locMan.getCurrentLocation().getLongitude()
+        );
+
         mMyMarker = mGoogleMap.addMarker(
                 new MarkerOptions()
                         .position(latLng));

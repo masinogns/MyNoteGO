@@ -1,5 +1,7 @@
 package com.tistory.fasdgoc.mynotego;
 
+import android.*;
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -19,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.fastaccess.permission.base.PermissionHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.tistory.fasdgoc.mynotego.activity.LoginActivity;
 import com.tistory.fasdgoc.mynotego.activity.WriteNoteActivity;
@@ -53,14 +56,26 @@ public class MainActivity extends AppCompatActivity {
     public void OnWriteNoteClicked() {
         Location location = mMyLocationManager.getCurrentLocation();
 
-        if (location != null) {
-            Intent intent = new Intent(this, WriteNoteActivity.class);
-            intent.putExtra("Location", location.toString());
-            startActivity(intent);
-        } else {
+        if (location == null) {
             Toast.makeText(this, "GPS를 수신하기 전까지는\n쪽지를 쓸 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        if (PermissionHelper.isPermissionDeclined(this, Manifest.permission.ACCESS_FINE_LOCATION)){
+            Toast.makeText(this, "위치 권한을 허용해주세요", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!mMyLocationManager.checkService()) {
+            return;
+        }
+
+        Intent intent = new Intent(this, WriteNoteActivity.class);
+        intent.putExtra("Location", location.toString());
+        startActivity(intent);
     }
+
+
 
     @OnItemClick(R.id.left_drawer)
     public void onItemClick(AdapterView<?> parent, int position) {

@@ -14,9 +14,12 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.fastaccess.permission.base.PermissionHelper;
+import com.google.android.gms.maps.model.LatLng;
 import com.tistory.fasdgoc.mynotego.R;
+import com.tistory.fasdgoc.mynotego.event.MoveMap;
 import com.tistory.fasdgoc.mynotego.event.MoveMarker;
 
 import org.greenrobot.eventbus.EventBus;
@@ -38,6 +41,8 @@ public class MyLocationManager {
     private String locProvider;
     private LocationListener locListener;
 
+    private boolean isFirstGetLocation = true;
+
     private Location currentLocation;
 
     private boolean grantedPermission = false;
@@ -51,6 +56,16 @@ public class MyLocationManager {
             @Override
             public void onLocationChanged(Location location) {
                 currentLocation = location;
+
+                if (isFirstGetLocation) {
+                    isFirstGetLocation = false;
+                    LatLng latLng = new LatLng(
+                            currentLocation.getLatitude(),
+                            currentLocation.getLongitude()
+                    );
+                    EventBus.getDefault().post(new MoveMap(latLng));
+                }
+
                 EventBus.getDefault().post(new MoveMarker());
             }
 
@@ -111,7 +126,7 @@ public class MyLocationManager {
     }
 
     public boolean checkService() {
-        boolean retResult = false;
+        boolean result = true;
 
         boolean gps = locMan.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean network = locMan.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -137,10 +152,10 @@ public class MyLocationManager {
                     })
                     .setCancelText("취소")
                     .show();
-            retResult = true;
+            result = false;
         }
 
-        return retResult;
+        return result;
     }
 
     public void OnRequestPermissionResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -182,6 +197,10 @@ public class MyLocationManager {
 
         try {
             currentLocation = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (isFirstGetLocation) {
+                EventBus.getDefault().post(new MoveMarker());
+            }
+
         } catch (IllegalArgumentException e) {
             Log.d(TAG, e.getMessage());
         } catch (SecurityException e) {

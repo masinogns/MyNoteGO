@@ -12,8 +12,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class WriteNoteActivity extends AppCompatActivity implements WriteNoteFragment.OnWriteClickedListener {
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
