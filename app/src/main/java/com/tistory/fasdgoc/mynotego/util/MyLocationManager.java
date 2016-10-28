@@ -9,13 +9,13 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.fastaccess.permission.base.PermissionHelper;
 import com.tistory.fasdgoc.mynotego.R;
 import com.tistory.fasdgoc.mynotego.event.MoveMarker;
 
@@ -31,7 +31,6 @@ public class MyLocationManager {
     private final static String TAG = "MyLocationManager";
 
     public final static int LOCATION = 9000;
-    public final static int SETTING = 9001;
 
     private Activity activity;
 
@@ -77,9 +76,9 @@ public class MyLocationManager {
     }
 
     public boolean requestPermission() {
-        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+        if (PermissionHelper.isPermissionDeclined(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
             grantedPermission = false;
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (PermissionHelper.isExplanationNeeded(activity, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 new SweetAlertDialog(activity, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
                         .setTitleText("위치 권한 요청")
                         .setContentText("사용자의 위치를\n추적하기 위해서\n위치권한이\n필요합니다.")
@@ -159,11 +158,8 @@ public class MyLocationManager {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                     sweetAlertDialog.dismiss();
-                                    Intent intent = new Intent();
-                                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                    Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
-                                    intent.setData(uri);
-                                    activity.startActivityForResult(intent, MyLocationManager.SETTING);
+
+                                    PermissionHelper.openSettingsScreen(activity);
                                 }
                             })
                             .setConfirmText("확인")
@@ -180,18 +176,6 @@ public class MyLocationManager {
             }
         }
     }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "request code : " + requestCode + ", result code : " + resultCode + ", data is " + data);
-        if(requestCode == MyLocationManager.SETTING) {
-            if(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-                grantedPermission = false;
-            } else {
-                grantedPermission = true;
-            }
-        }
-    }
-
 
     public boolean newProviderUpdate() {
         boolean retResult = false;
@@ -222,8 +206,8 @@ public class MyLocationManager {
         return retResult;
     }
 
-    public void addUpdate() {
-        if(locProvider == null) {
+    public void register() {
+        if (locProvider == null) {
             locProvider = locMan.getBestProvider(new Criteria(), true);
         }
 
@@ -236,7 +220,7 @@ public class MyLocationManager {
         }
     }
 
-    public void removeUpdate() {
+    public void unregister() {
         try {
             locMan.removeUpdates(locListener);
         } catch (SecurityException e) {

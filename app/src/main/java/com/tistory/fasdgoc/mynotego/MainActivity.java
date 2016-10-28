@@ -13,8 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +24,7 @@ import com.tistory.fasdgoc.mynotego.activity.LoginActivity;
 import com.tistory.fasdgoc.mynotego.activity.WriteNoteActivity;
 import com.tistory.fasdgoc.mynotego.adapter.DrawerListAdapter;
 import com.tistory.fasdgoc.mynotego.util.MyLocationManager;
+import com.tistory.fasdgoc.mynotego.util.MySensorManager;
 
 import java.util.ArrayList;
 
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
 
     private MyLocationManager mMyLocationManager;
+    private MySensorManager mMySensorManager;
 
     private boolean exitActivity = false;
     private String title;
@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.write_note_button)
     public void OnWriteNoteClicked() {
         Location location = mMyLocationManager.getCurrentLocation();
-        
-        if(location != null) {
+
+        if (location != null) {
             Intent intent = new Intent(this, WriteNoteActivity.class);
             intent.putExtra("Location", location.toString());
             startActivity(intent);
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
     public MyLocationManager getmMyLocationManager() {
         return mMyLocationManager;
     }
+
     @Override
     @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
         array.add(new DrawerListAdapter.DrawerItem(R.drawable.megaphone, "공지사항"));
         array.add(new DrawerListAdapter.DrawerItem(R.drawable.settings, "환경설정"));
         array.add(new DrawerListAdapter.DrawerItem(R.drawable.fax, "문의 및 건의"));
-
-        mMyLocationManager = new MyLocationManager(this);
 
         mAdapter = new DrawerListAdapter(this, array, R.layout.draweritem);
         mDrawerList.setAdapter(mAdapter);
@@ -137,30 +136,29 @@ public class MainActivity extends AppCompatActivity {
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        mMyLocationManager = new MyLocationManager(this);
+        mMySensorManager = new MySensorManager(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMyLocationManager.addUpdate();
+        mMyLocationManager.register();
+        mMySensorManager.register();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mMyLocationManager.removeUpdate();
+        mMyLocationManager.unregister();
+        mMySensorManager.unregister();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         mMyLocationManager.OnRequestPermissionResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mMyLocationManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -202,10 +200,5 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
     }
 }

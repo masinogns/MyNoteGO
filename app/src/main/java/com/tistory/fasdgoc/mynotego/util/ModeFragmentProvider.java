@@ -1,11 +1,10 @@
 package com.tistory.fasdgoc.mynotego.util;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 
+import com.fastaccess.permission.base.PermissionHelper;
 import com.tistory.fasdgoc.mynotego.fragment.CameraFragment;
 import com.tistory.fasdgoc.mynotego.fragment.MyMapFragment;
 import com.tistory.fasdgoc.mynotego.fragment.PlaceHolderFragment;
@@ -18,7 +17,7 @@ import com.tistory.fasdgoc.mynotego.helper.ViewModeHelper;
 public class ModeFragmentProvider {
     private Context context;
 
-    private MyMapFragment mapFragment = new MyMapFragment();
+    private Fragment mapFragment = new MyMapFragment();
 
     private CameraFragment cameraFragment = new CameraFragment();
     private PlaceHolderFragment placeHolderFragment = new PlaceHolderFragment();
@@ -37,12 +36,11 @@ public class ModeFragmentProvider {
                 break;
 
             case ViewModeHelper.CAMERA:
-                if(ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_DENIED) {
+                if(PermissionHelper.isPermissionDeclined(context, Manifest.permission.CAMERA)) {
                     result = placeHolderFragment;
                 } else {
                     result = cameraFragment;
                 }
-
                 break;
 
             default:

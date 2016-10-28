@@ -1,9 +1,9 @@
 package com.tistory.fasdgoc.mynotego.fragment;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +15,8 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -42,7 +42,7 @@ public class MyMapFragment extends Fragment {
 
     private final int LOCATION_PERM = 8000;
 
-    private MapFragment mMapFragment;
+    private SupportMapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Marker mMyMarker;
 
@@ -69,7 +69,15 @@ public class MyMapFragment extends Fragment {
 
         boolean grantedPermission = locMan.requestPermission();
         if (grantedPermission) {
-            moveMaptoCurrentLocation();
+            boolean ret = locMan.newProviderUpdate();
+            if (ret == true) {
+                Toast.makeText(getActivity(), "GPS 신호를 기다리는 중...", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Location currentLocation = locMan.getCurrentLocation();
+            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            moveMapCamera(latLng);
         }
     }
 
@@ -78,7 +86,7 @@ public class MyMapFragment extends Fragment {
         View root = layoutInflater.inflate(R.layout.mymapfragment, viewGroup, false);
         ButterKnife.bind(this, root);
 
-        MapFragment mapFragment = new MapFragment();
+        SupportMapFragment mapFragment = new SupportMapFragment();
 
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
@@ -99,7 +107,7 @@ public class MyMapFragment extends Fragment {
     @Override
     public void onStop() {
         Log.d(TAG, "onStop");
-        super.onPause();
+        super.onStop();
         EventBus.getDefault().unregister(this);
     }
 
@@ -128,19 +136,6 @@ public class MyMapFragment extends Fragment {
                 moveMapCamera(latLng);
             }
         });
-    }
-
-    private void moveMaptoCurrentLocation() {
-
-        boolean immediateRet = locMan.newProviderUpdate();
-        if (immediateRet == true) {
-            Toast.makeText(getActivity(), "GPS 신호를 기다리는 중...", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Location currentLocation = locMan.getCurrentLocation();
-        LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        moveMapCamera(latLng);
     }
 
     private void moveMapCamera(LatLng latLng) {
