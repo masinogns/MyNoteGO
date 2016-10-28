@@ -26,6 +26,10 @@ public class MySensorManager implements SensorEventListener {
         currentLight = new Light();
     }
 
+    public Orientation getCurrentOrient() {
+        return currentOrient;
+    }
+
     @SuppressWarnings("deprecation")
     public void register() {
         Sensor sensor = null;

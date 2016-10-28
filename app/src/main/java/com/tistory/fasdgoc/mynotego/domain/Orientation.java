@@ -1,10 +1,12 @@
 package com.tistory.fasdgoc.mynotego.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by fasdg on 2016-10-28.
  */
 
-public class Orientation {
+public class Orientation implements Serializable {
     private float azimuth;
     private float pitch;
     private float roll;

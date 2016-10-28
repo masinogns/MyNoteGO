@@ -55,9 +55,10 @@ dependencies {
 
     compile 'com.github.k0shk0sh:PermissionHelper:1.1.0'
 
-    compile 'com.google.android.gms:play-services:9.6.1'
-    compile 'com.google.firebase:firebase-auth:9.6.1'
-    compile 'com.google.android.gms:play-services-auth:9.6.1'
+    compile 'com.google.android.gms:play-services:9.8.0'
+    compile 'com.google.android.gms:play-services-auth:9.8.0'
+    compile 'com.google.firebase:firebase-auth:9.8.0'
+    compile 'com.google.firebase:firebase-database:9.8.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

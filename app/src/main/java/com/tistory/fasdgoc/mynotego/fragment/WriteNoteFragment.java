@@ -12,9 +12,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.tistory.fasdgoc.mynotego.R;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnLongClick;
 
@@ -28,17 +30,16 @@ public class WriteNoteFragment extends Fragment {
     private OnWriteClickedListener context;
 
     public interface OnWriteClickedListener {
-        void OnWriteClicked();
+        void OnWriteClicked(String t1, String t2);
     }
 
-    @OnLongClick(R.id.title)
-    public boolean onTitleLongClicked(View v) {
-        ((EditText)v).selectAll();
-        return false;
-    }
-    @OnLongClick(R.id.content)
-    public boolean onContentLongClicked(View v) {
-        ((EditText)v).selectAll();
+    @BindView(R.id.title)
+    EditText titleEdit;
+    @BindView(R.id.content)
+    EditText contentEdit;
+    @OnLongClick({R.id.title, R.id.content})
+    public boolean onEditLongClicked(View v) {
+        ((EditText) v).selectAll();
         return false;
     }
 
@@ -47,7 +48,8 @@ public class WriteNoteFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.writenotefragment, container, false);
         ButterKnife.bind(this, root);
-
+        Log.d(TAG, titleEdit.toString());
+        Log.d(TAG, contentEdit.toString());
         return root;
     }
 
@@ -78,11 +80,19 @@ public class WriteNoteFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.write) {
-            context.OnWriteClicked();
-            return true;
-        }
 
+        if (item.getItemId() == R.id.write) {
+            String title = titleEdit.getText().toString();
+            String content = contentEdit.getText().toString();
+
+            if((title.length() > 2) && (content.length() > 2)) {
+                context.OnWriteClicked(title, content);
+                return true;
+
+            } else {
+                Toast.makeText(getActivity(), "글자 수가 너무 적습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
         return false;
     }
 }

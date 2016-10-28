@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,9 +24,13 @@ import android.widget.Toast;
 
 import com.fastaccess.permission.base.PermissionHelper;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.tistory.fasdgoc.mynotego.activity.LoginActivity;
 import com.tistory.fasdgoc.mynotego.activity.WriteNoteActivity;
 import com.tistory.fasdgoc.mynotego.adapter.DrawerListAdapter;
+import com.tistory.fasdgoc.mynotego.domain.Orientation;
+import com.tistory.fasdgoc.mynotego.domain.Position;
+import com.tistory.fasdgoc.mynotego.domain.User;
 import com.tistory.fasdgoc.mynotego.util.MyLocationManager;
 import com.tistory.fasdgoc.mynotego.util.MySensorManager;
 
@@ -39,6 +44,10 @@ import butterknife.OnItemClick;
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = "MainActivity";
 
+    private final static int WRITE_ACT = 9000;
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
     private MyLocationManager mMyLocationManager;
     private MySensorManager mMySensorManager;
 
@@ -70,12 +79,33 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        Log.d(TAG, "쪽지쓰기 액티비티로 데이터 전달함");
         Intent intent = new Intent(this, WriteNoteActivity.class);
-        intent.putExtra("Location", location.toString());
-        startActivity(intent);
+        Location lc = mMyLocationManager.getCurrentLocation();
+
+        intent.putExtra("user", new User(mUser.getUid(), mUser.getDisplayName(), mUser.getEmail()));
+        intent.putExtra("position", new Position(lc.getLatitude(), lc.getLongitude(), lc.getAltitude()));
+        intent.putExtra("orientation", mMySensorManager.getCurrentOrient());
+
+        startActivityForResult(intent, WRITE_ACT);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case WRITE_ACT:
+                if(resultCode == RESULT_OK) {
+                    Toast.makeText(this, "쪽지를 성공적으로 작성했습니다", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "쪽지를 작성하는데 실패했습니다", Toast.LENGTH_SHORT).show();
+                }
+                break;
 
+            default:
+                break;
+        }
+    }
 
     @OnItemClick(R.id.left_drawer)
     public void onItemClick(AdapterView<?> parent, int position) {
@@ -88,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("로그아웃", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                FirebaseAuth.getInstance().signOut();
+                                mAuth.signOut();
 
                                 Toast.makeText(MainActivity.this, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show();
 
@@ -137,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 title = getTitle().toString();
-                String user = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+                String user = mUser.getDisplayName();
                 setTitle(user);
                 invalidateOptionsMenu();
             }
@@ -151,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
         };
         mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
         mMyLocationManager = new MyLocationManager(this);
         mMySensorManager = new MySensorManager(this);
