@@ -26,9 +26,11 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.tistory.fasdgoc.mynotego.MainActivity;
 import com.tistory.fasdgoc.mynotego.R;
 import com.tistory.fasdgoc.mynotego.adapter.IntroPagerAdapter;
-import com.tistory.fasdgoc.mynotego.event.SignInJoin;
+import com.tistory.fasdgoc.mynotego.domain.User;
 import com.tistory.fasdgoc.mynotego.event.SignDialogClose;
+import com.tistory.fasdgoc.mynotego.event.SignInJoin;
 import com.tistory.fasdgoc.mynotego.fragment.LoginFragment;
+import com.tistory.fasdgoc.mynotego.helper.DatabaseHelper;
 import com.tistory.fasdgoc.mynotego.listener.ArgbPageChangeListener;
 import com.tistory.fasdgoc.mynotego.util.ParallelxPageTransformer;
 
@@ -144,8 +146,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                                         Toast.makeText(LoginActivity.this, "Authentication failed.",
                                                 Toast.LENGTH_SHORT).show();
                                     } else {
-                                        String userName = account.getDisplayName();
 
+                                        User user = new User(
+                                                mAuth.getCurrentUser().getDisplayName(),
+                                                mAuth.getCurrentUser().getEmail(),
+                                                mAuth.getCurrentUser().getPhotoUrl().toString()
+                                        );
+                                        DatabaseHelper.updateUser(
+                                                mAuth.getCurrentUser().getUid(),
+                                                user);
+
+                                        String userName = mAuth.getCurrentUser().getDisplayName();
                                         Toast.makeText(LoginActivity.this,
                                                 String.format("%s님, 안녕하세요", userName),
                                                 Toast.LENGTH_SHORT).show();

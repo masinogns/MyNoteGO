@@ -1,6 +1,5 @@
 package com.tistory.fasdgoc.mynotego;
 
-import android.*;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,9 +27,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.tistory.fasdgoc.mynotego.activity.LoginActivity;
 import com.tistory.fasdgoc.mynotego.activity.WriteNoteActivity;
 import com.tistory.fasdgoc.mynotego.adapter.DrawerListAdapter;
-import com.tistory.fasdgoc.mynotego.domain.Orientation;
 import com.tistory.fasdgoc.mynotego.domain.Position;
-import com.tistory.fasdgoc.mynotego.domain.User;
 import com.tistory.fasdgoc.mynotego.util.MyLocationManager;
 import com.tistory.fasdgoc.mynotego.util.MySensorManager;
 
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, WriteNoteActivity.class);
         Location lc = mMyLocationManager.getCurrentLocation();
 
-        intent.putExtra("user", new User(mUser.getUid(), mUser.getDisplayName(), mUser.getEmail()));
+        intent.putExtra("uid", mAuth.getCurrentUser().getUid());
         intent.putExtra("position", new Position(lc.getLatitude(), lc.getLongitude(), lc.getAltitude()));
         intent.putExtra("orientation", mMySensorManager.getCurrentOrient());
 

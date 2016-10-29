@@ -1,20 +1,18 @@
 package com.tistory.fasdgoc.mynotego.activity;
 
-import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tistory.fasdgoc.mynotego.R;
+import com.tistory.fasdgoc.mynotego.domain.Note;
 import com.tistory.fasdgoc.mynotego.domain.Orientation;
 import com.tistory.fasdgoc.mynotego.domain.Position;
-import com.tistory.fasdgoc.mynotego.domain.User;
 import com.tistory.fasdgoc.mynotego.fragment.WriteNoteFragment;
+import com.tistory.fasdgoc.mynotego.helper.DatabaseHelper;
 
-import butterknife.BindView;
+import java.util.Date;
+
 import butterknife.ButterKnife;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -71,14 +69,14 @@ public class WriteNoteActivity extends AppCompatActivity implements WriteNoteFra
     }
 
     @Override
-    public void OnWriteClicked(String t1, String t2) {
-        String title = t1;
-        String content = t2;
-        User user = (User) getIntent().getSerializableExtra("user");
+    public void OnWriteClicked(String title, String content) {
+        String uid = getIntent().getStringExtra("uid");
         Position position = (Position) getIntent().getSerializableExtra("position");
         Orientation orientation = (Orientation) getIntent().getSerializableExtra("orientation");
-        // 위 데이터를 디비에 추가.
 
+        DatabaseHelper.addNote(
+                new Note(uid, title, content, position, orientation, new Date())
+        );
         setResult(RESULT_OK);
         finish();
     }

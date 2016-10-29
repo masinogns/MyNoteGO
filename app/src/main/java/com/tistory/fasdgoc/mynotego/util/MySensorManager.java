@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 
 import com.tistory.fasdgoc.mynotego.domain.Light;
 import com.tistory.fasdgoc.mynotego.domain.Orientation;
@@ -14,6 +15,8 @@ import com.tistory.fasdgoc.mynotego.domain.Orientation;
  */
 
 public class MySensorManager implements SensorEventListener {
+    private static final String TAG = "MySensorManager";
+
     private SensorManager sensorManager;
 
     private Orientation currentOrient;
@@ -32,13 +35,11 @@ public class MySensorManager implements SensorEventListener {
 
     @SuppressWarnings("deprecation")
     public void register() {
-        Sensor sensor = null;
+        Sensor oriSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        sensorManager.registerListener(this, oriSensor, SensorManager.SENSOR_DELAY_UI);
 
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
-
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_UI);
+        Sensor lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        sensorManager.registerListener(this, lightSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
     public void unregister() {
@@ -59,10 +60,12 @@ public class MySensorManager implements SensorEventListener {
                 currentOrient.setAzimuth(values[0]);
                 currentOrient.setPitch(values[1]);
                 currentOrient.setRoll(values[2]);
+                Log.d(TAG, currentOrient.toString());
                 break;
 
             case Sensor.TYPE_LIGHT:
                 currentLight.setIntensity(values[0]);
+                Log.d(TAG, currentLight.toString());
                 break;
 
             default:

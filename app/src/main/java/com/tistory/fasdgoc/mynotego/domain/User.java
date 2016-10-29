@@ -1,7 +1,5 @@
 package com.tistory.fasdgoc.mynotego.domain;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.io.Serializable;
 
 /**
@@ -9,25 +7,26 @@ import java.io.Serializable;
  */
 
 public class User implements Serializable {
-    private String uid;
     private String name;
     private String email;
+    private String photo;
 
     public User() {
+
     }
 
-    public User(String uid, String name, String email) {
-        this.uid = uid;
+    public User(String name, String email, String photo) {
         this.name = name;
         this.email = email;
+        this.photo = photo;
     }
 
-    public String getUid() {
-        return uid;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public String getName() {

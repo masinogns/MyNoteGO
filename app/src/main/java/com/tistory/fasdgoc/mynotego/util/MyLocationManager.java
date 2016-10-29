@@ -14,7 +14,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.fastaccess.permission.base.PermissionHelper;
 import com.google.android.gms.maps.model.LatLng;

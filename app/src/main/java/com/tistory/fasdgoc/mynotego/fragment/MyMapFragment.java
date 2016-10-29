@@ -17,18 +17,27 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.tistory.fasdgoc.mynotego.MainActivity;
 import com.tistory.fasdgoc.mynotego.R;
+import com.tistory.fasdgoc.mynotego.domain.KeyWithNote;
+import com.tistory.fasdgoc.mynotego.domain.Note;
+import com.tistory.fasdgoc.mynotego.domain.Position;
+import com.tistory.fasdgoc.mynotego.event.ListingNote;
 import com.tistory.fasdgoc.mynotego.event.MoveMap;
 import com.tistory.fasdgoc.mynotego.event.MoveMarker;
+import com.tistory.fasdgoc.mynotego.helper.DatabaseHelper;
 import com.tistory.fasdgoc.mynotego.util.MyLocationManager;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,7 +55,7 @@ public class MyMapFragment extends Fragment {
     private SupportMapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Marker mMyMarker;
-
+    private HashMap<String, Marker> markerMap = new HashMap<>();
     private MyLocationManager locMan;
 
     @BindView(R.id.mylocation)
@@ -59,7 +68,7 @@ public class MyMapFragment extends Fragment {
                 .playOn(mMyLocButton);
 
         if (mGoogleMap == null) {
-            Toast.makeText(getActivity(), "지도를 불러올 때까지 잠시만 기다려주세요.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "지도를 불러오는 중...", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -103,25 +112,47 @@ public class MyMapFragment extends Fragment {
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        DatabaseHelper.register();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        DatabaseHelper.unregister();
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
-        locMan = ((MainActivity)getActivity()).getmMyLocationManager();
+        locMan = ((MainActivity) getActivity()).getmMyLocationManager();
 
         mMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
+                Log.d(TAG, "Getmapasync 호출");
                 mGoogleMap = googleMap;
+                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        KeyWithNote keyWithNote = (KeyWithNote) marker.getTag();
+
+                        String key = keyWithNote.getKey();
+                        Note note = keyWithNote.getNote();
+                        if(key != "ME") {
+                            marker.showInfoWindow();
+
+                            Log.d(TAG, "Marker Clicked - key");
+//                            markerMap.remove(key);
+//                            marker.remove();
+//                            DatabaseHelper.removeNote(key);
+                        }
+
+
+                        return true;
+                    }
+                });
 
                 Location currentLocation = locMan.getCurrentLocation();
                 LatLng latLng;
@@ -131,7 +162,6 @@ public class MyMapFragment extends Fragment {
                     latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                     moveMarker(new MoveMarker());
                 }
-
                 moveMapCamera(new MoveMap(latLng));
             }
         });
@@ -146,17 +176,47 @@ public class MyMapFragment extends Fragment {
 
     @Subscribe
     public void moveMarker(MoveMarker moveMarker) {
-        if(mMyMarker != null) {
+        if (mMyMarker != null) {
             mMyMarker.remove();
         }
 
-        LatLng latLng = new LatLng(
-                locMan.getCurrentLocation().getLatitude(),
-                locMan.getCurrentLocation().getLongitude()
-        );
+        Location my = locMan.getCurrentLocation();
+        if(my != null) {
+            LatLng latLng = new LatLng(
+                    locMan.getCurrentLocation().getLatitude(),
+                    locMan.getCurrentLocation().getLongitude()
+            );
 
-        mMyMarker = mGoogleMap.addMarker(
-                new MarkerOptions()
-                        .position(latLng));
+            BitmapDescriptor ico = BitmapDescriptorFactory.fromResource(R.drawable.standingman);
+            mMyMarker = mGoogleMap.addMarker(
+                    new MarkerOptions()
+                    .position(latLng)
+                    .icon(ico)
+            );
+            mMyMarker.setTag(new KeyWithNote("ME", null));
+        }
+    }
+
+    @Subscribe
+    public void updateMarkers(ListingNote e) {
+        markerMap.clear();
+        HashMap<String, Note> map = e.map;
+
+        for(String key : map.keySet()) {
+            Note note = map.get(key);
+            Position pos = note.getPosition();
+
+            LatLng latLng = new LatLng(pos.getLatitude(), pos.getLongitude());
+
+            BitmapDescriptor ico = BitmapDescriptorFactory.fromResource(R.drawable.textline);
+            Marker marker = mGoogleMap.addMarker(
+                    new MarkerOptions().position(latLng)
+                    .title(note.getTitle())
+                    .icon(ico)
+            );
+            marker.setTag(new KeyWithNote(key, note));
+
+            markerMap.put(key, marker);
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.tistory.fasdgoc.mynotego.fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.tistory.fasdgoc.mynotego.R;
-import com.tistory.fasdgoc.mynotego.event.SignInJoin;
 import com.tistory.fasdgoc.mynotego.event.SignDialogClose;
+import com.tistory.fasdgoc.mynotego.event.SignInJoin;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,21 +42,6 @@ public class LoginFragment extends Fragment {
         EventBus.getDefault().post(new SignDialogClose(true));
 
         activity.onSignInTry(v);
-    }
-
-    @Subscribe
-    public void onSigned(SignDialogClose e) {
-        if(e.showing) {
-            signingDialog = new SpotsDialog(getActivity());
-            signingDialog.setCancelable(false);
-            signingDialog.show();
-
-        } else {
-            if(signingDialog == null)
-                return;
-            signingDialog.dismiss();
-            signingDialog = null;
-        }
     }
 
     @Override
@@ -91,6 +75,21 @@ public class LoginFragment extends Fragment {
         ButterKnife.bind(this, root);
 
         return root;
+    }
+
+    @Subscribe
+    public void onSigned(SignDialogClose e) {
+        if(e.showing) {
+            signingDialog = new SpotsDialog(getActivity());
+            signingDialog.setCancelable(false);
+            signingDialog.show();
+
+        } else {
+            if(signingDialog == null)
+                return;
+            signingDialog.dismiss();
+            signingDialog = null;
+        }
     }
 
     @Subscribe
