@@ -55,6 +55,8 @@ dependencies {
 
     compile 'com.github.k0shk0sh:PermissionHelper:1.1.0'
 
+    compile 'org.rajawali3d:rajawali:1.0.325@aar'
+
     compile 'com.google.android.gms:play-services:9.8.0'
     compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'com.google.firebase:firebase-auth:9.8.0'

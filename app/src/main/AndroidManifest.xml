@@ -43,7 +43,8 @@
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-        <activity android:name=".activity.WriteNoteActivity"></activity>
+        <activity android:name=".activity.WriteNoteActivity" />
+        <activity android:name=".activity.NoteListActivity"></activity>
     </application>
 
 </manifest>

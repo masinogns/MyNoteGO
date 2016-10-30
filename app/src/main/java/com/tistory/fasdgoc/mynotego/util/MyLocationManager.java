@@ -195,7 +195,7 @@ public class MyLocationManager {
         boolean retResult = false;
 
         try {
-            currentLocation = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            currentLocation = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (isFirstGetLocation) {
                 EventBus.getDefault().post(new MoveMarker());
             }

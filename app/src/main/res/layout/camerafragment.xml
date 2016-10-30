@@ -1,24 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageButton
+        android:id="@+id/focus"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="end"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#00FFFFFF"
+        android:scaleType="fitXY"
+        android:src="@drawable/search"
+        android:text="Button" />
+
+    <org.rajawali3d.surface.RajawaliSurfaceView
+        android:id="@+id/noteView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00FFFFFF"
+        app:frameRate="60"
+        app:renderMode="RENDER_WHEN_DIRTY" />
 
     <com.tistory.fasdgoc.mynotego.view.CameraSurfaceView
         android:id="@+id/camera"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <!-- Here 3D Object -->
-
-    <ImageButton
-        android:id="@+id/focus"
-        android:src="@drawable/search"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:scaleType="fitXY"
-        android:background="#00FFFFFF"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:text="Button"
-        android:layout_gravity="end"/>
 
 </FrameLayout>

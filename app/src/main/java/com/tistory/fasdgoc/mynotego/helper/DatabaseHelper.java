@@ -25,6 +25,7 @@ public class DatabaseHelper {
 
     private static HashMap<String, Note> noteMap;
     private static ValueEventListener notesListListener;
+    private static ValueEventListener notesMetersListListener;
 
     static {
         database = FirebaseDatabase.getInstance();
@@ -46,10 +47,17 @@ public class DatabaseHelper {
             public void onCancelled(DatabaseError databaseError) {
             }
         };
-    }
+        notesMetersListListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-    public static DatabaseReference getNotesRef() {
-        return notes;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
     }
 
     public static void register() {
@@ -59,6 +67,28 @@ public class DatabaseHelper {
 
     public static void unregister() {
         notes.removeEventListener(notesListListener);
+    }
+
+    public static void register(float meters) {
+        noteMap.clear();
+        notes.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    //TODO
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public static void unregister(float meters) {
+
     }
 
     public static void updateUser(String uid, User user) {
